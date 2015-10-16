@@ -21,7 +21,7 @@ describe DockingStation do
   describe '#release_bike' do
     it 'releases a working bike' do
       bike = double(:working? => true)
-      subject.dock bike
+      subject.dock(bike)
       expect(subject.release_bike).to be_working
     end
     context 'docking station empty' do
@@ -55,8 +55,8 @@ describe DockingStation do
 
     context 'docking station is full' do
       it 'raises an error' do
-        DockingStation::DEFAULT_CAPACITY.times { subject.dock double(:bike) }
-        expect{subject.dock double(:bike) }.to raise_error "Docking station full"
+        DockingStation::DEFAULT_CAPACITY.times { subject.dock(bike) }
+        expect{ subject.dock(bike) }.to raise_error "Docking station full"
       end
     end
 
@@ -74,15 +74,14 @@ describe DockingStation do
       end
     end
 
-    context 'Van' do
-      it 'takes broken bikes from docking station' do
-        van =  Van.new
-        4.times { subject.dock(Bike.new.broken) }
-        van.push_broken_bikes(subject.remove_broken_bikes)
-        expect(subject.bikes).to eq van.garage
+  describe '#remove_broken_bikes' do
+      it 'removes broken bikes' do
+        allow(bike).to receive(:working?).and_return(true)
+        subject.dock(bike)
+        3.times { subject.dock(Bike.new.broken) }
+        broken_bikes = subject.remove_broken_bikes
+        expect(subject.bikes).not_to include broken_bikes
       end
-
     end
-
   end
 end

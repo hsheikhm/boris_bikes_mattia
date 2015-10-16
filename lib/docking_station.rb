@@ -1,39 +1,36 @@
-require_relative 'bike'
-require_relative 'van'
+require_relative 'bike'  # => true
 
 class DockingStation
-  attr_reader :bikes, :capacity, :garage
 
-  DEFAULT_CAPACITY = 20
+  attr_reader :bikes, :capacity  # => nil
+
+  DEFAULT_CAPACITY = 20  # => 20
 
   def initialize(capacity=DEFAULT_CAPACITY)
-    @bikes =[]
+    @bikes = []
     @capacity = capacity
-    
   end
 
   def release_bike
     #raise 'No bikes available' if empty?
-    bikes.each { |bike| return bikes.delete(bike) if bike.working? }
+    @bikes.each { |bike| return @bikes.delete(bike) if bike.working? }
     raise 'No bikes available'
   end
 
   def dock(bike)
     raise 'Docking station full' if full?
-    bikes << bike
+    @bikes << bike
   end
 
   def remove_broken_bikes
-    #bikes.each { |bike| bikes.delete(bike) if bike.broken }
-    bikes.select do |bike|
-      bike.broken
-    end
-
+    broken_bikes = @bikes.select { |bike| bike.working? == false }
+    @bikes -= broken_bikes
+    broken_bikes
   end
 
-  private               # => DockingStation
+  private                       # => DockingStation
   def full?
-    bikes.length >= @capacity
+    @bikes.length >= @capacity
   end
 
   # def empty?

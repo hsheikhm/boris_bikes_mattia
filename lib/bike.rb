@@ -1,4 +1,5 @@
 class Bike
+
   attr_reader :working  # => nil
 
   def initialize
@@ -13,4 +14,5 @@ class Bike
     @working = false
     self
   end
+
 end

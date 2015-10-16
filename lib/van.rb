@@ -8,8 +8,8 @@ attr_reader :garage
     @garage = []
   end
 
-  def push_broken_bikes(broken_bikes)
-    @garage << remove_broken_bikes 
+  def deliver(broken_bikes)
+    broken_bikes.each { |bike| @garage << bike }
   end
 
 end
