@@ -1,4 +1,5 @@
 require 'docking_station'
+require 'van'
 
 describe DockingStation do
 
@@ -30,15 +31,14 @@ describe DockingStation do
     end
     context 'broken bike' do
       it 'is not released' do
-        bike = double(:working? => true, :broken => bike)
+        allow(bike).to receive(:working?).and_return(true)
+        allow(bike).to receive(:broken).and_return(bike)
         5.times { subject.dock bike }
-        subject.dock(bike.broken)
         expect(subject.release_bike).to be_working
       end
       it 'raises an error when all bikes are broken' do
         allow(bike).to receive(:broken).and_return(bike)
         allow(bike).to receive(:working?).and_return(false)
-
         5.times do
           subject.dock(bike.broken)
         end
@@ -64,7 +64,7 @@ describe DockingStation do
       it 'can be reported' do
         allow(bike).to receive(:broken).and_return(bike)
         allow(bike).to receive(:working?).and_return(false)
-        expect(bike.broken).not_to be_working
+        expect(bike).not_to be_working
       end
       it 'can be docked' do
         allow(bike).to receive(:broken).and_return(bike)
@@ -73,5 +73,16 @@ describe DockingStation do
         expect(subject.bikes).to include bike
       end
     end
+
+    context 'Van' do
+      it 'takes broken bikes from docking station' do
+        van =  Van.new
+        4.times { subject.dock(Bike.new.broken) }
+        van.push_broken_bikes(subject.remove_broken_bikes)
+        expect(subject.bikes).to eq van.garage
+      end
+
+    end
+
   end
 end
